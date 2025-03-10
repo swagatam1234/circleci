@@ -25,7 +25,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "<<your_ssh_fingerprint_here>>"
+            - "SHA256:xr2YeW2BrstynvgcjkicFSKC6jEWFmrtliNprXrkgc8"
       - run:
           name: Deploy to EC2
           command: |
