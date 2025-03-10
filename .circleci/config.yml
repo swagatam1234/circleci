@@ -29,13 +29,14 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Deploy to EC2
-          command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@${AWS_EC2_INSTANCE} << 'EOF'
-            cd /var/www/myapp
-            git pull origin main
-            sudo systemctl restart apache2
-            EOF
+    name: Deploy to EC2
+    command: |
+      ssh -o StrictHostKeyChecking=no ubuntu@${AWS_EC2_INSTANCE} \<< 'EOF'
+      cd /var/www/myapp
+      git pull origin main
+      sudo systemctl restart apache2
+      EOF
+
 
 workflows:
   version: 2
