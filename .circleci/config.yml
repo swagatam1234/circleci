@@ -1,42 +1,36 @@
 version: 2.1
 
-orbs:
-  aws-cli: circleci/aws-cli@3.1.2
-  python: circleci/python@2.1.1
+executors:
+  python-executor:
+    docker:
+      - image: circleci/python:3.9
+    working_directory: ~/my-python-app
 
 jobs:
   build:
-    docker:
-      - image: circleci/python:3.9
+    executor: python-executor
     steps:
       - checkout
       - run:
           name: Install dependencies
-          command: pip install flask gunicorn
+          command: pip install -r requirements.txt
       - run:
-          name: Run tests
-          command: python -m unittest discover tests
-      - persist_to_workspace:
-          root: .
-          paths:
-            - "*"
+          name: Run Tests
+          command: pytest tests/
 
   deploy:
     docker:
       - image: circleci/python:3.9
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - add_ssh_keys:
+          fingerprints:
+            - "<<your_ssh_fingerprint_here>>"
       - run:
-    name: Deploy to EC2
-    command: |
-      ssh -o StrictHostKeyChecking=no ubuntu@${AWS_EC2_INSTANCE} \<< 'EOF'
-      cd /var/www/myapp
-      git pull origin main
-      sudo systemctl restart apache2
-      EOF
-
+          name: Deploy to EC2
+          command: |
+            chmod +x deploy/deploy.sh
+            ./deploy/deploy.sh
 
 workflows:
   version: 2
